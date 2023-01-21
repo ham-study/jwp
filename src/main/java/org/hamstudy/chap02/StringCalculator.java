@@ -40,13 +40,13 @@ public class StringCalculator {
 		return sum;
 	}
 
-	private static void validatePositiveOrZero(Integer number) {
+	private void validatePositiveOrZero(Integer number) {
 		if (number < 0) {
 			throw new IllegalArgumentException("number should be zero or positive");
 		}
 	}
 
-	private static List<Integer> toNumbers(String separator, String expression) {
+	private List<Integer> toNumbers(String separator, String expression) {
 		return Arrays.stream(expression.split(separator))
 			.map(Integer::parseInt)
 			.toList();

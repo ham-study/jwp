@@ -47,7 +47,9 @@ public class StringCalculator {
 	}
 
 	private List<Integer> toNumbers(String separator, String expression) {
-		return Arrays.stream(expression.split(separator))
+		return Arrays.stream(
+				expression.split(separator)
+			)
 			.map(Integer::parseInt)
 			.toList();
 	}

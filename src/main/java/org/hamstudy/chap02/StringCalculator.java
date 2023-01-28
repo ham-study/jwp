@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class StringCalculator {
 	public int calculate(String input) {
@@ -59,9 +58,11 @@ public class StringCalculator {
 		}
 
 		public List<Integer> toNumbers() {
-			return Arrays.stream(value.split(separator))
+			return Arrays.stream(
+					value.split(separator)
+				)
 				.map(Integer::parseInt)
-				.collect(Collectors.toList());
+				.toList();
 		}
 	}
 }

@@ -18,10 +18,10 @@ public class StringCalculator {
 			throw new IllegalArgumentException(String.format("input should not be empty or blank. input: %s", input));
 		}
 
-		Matcher matcher = CUSTOM_SEPARATOR_PATTERN.matcher(input);
 		String separator = DEFAULT_SEPARATORS;
 		String expression = input;
 
+		Matcher matcher = CUSTOM_SEPARATOR_PATTERN.matcher(input);
 		if (matcher.find()) {
 			separator = matcher.group(REGEX_SEPARATOR_IDX);
 			expression = matcher.group(REGEX_EXPRESSION_IDX);

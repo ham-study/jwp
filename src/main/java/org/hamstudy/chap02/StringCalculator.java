@@ -1,6 +1,7 @@
 package org.hamstudy.chap02;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,13 +41,13 @@ public class StringCalculator {
 		private static final Pattern CUSTOM_SEPARATOR_PATTERN = Pattern.compile(
 			"//(\\D)\n(.+)"
 		);
-		private static final String DEFAULT_SEPARATORS = ",|;";
+		private static final String DEFAULT_SEPARATORS = ",|:";
 		private static final int REGEX_SEPARATOR_IDX = 1;
 		private static final int REGEX_EXPRESSION_IDX = 2;
 
 		public static Expression of(String input) {
 			if (input == null || input.isBlank()) {
-				throw new IllegalArgumentException("input should not be empty or blank");
+				return new Expression(null, null);
 			}
 
 			Matcher matcher = CUSTOM_SEPARATOR_PATTERN.matcher(input);
@@ -58,6 +59,10 @@ public class StringCalculator {
 		}
 
 		public List<Integer> toNumbers() {
+			if (value == null || separator == null) {
+				return Collections.emptyList();
+			}
+
 			return Arrays.stream(
 					value.split(separator)
 				)

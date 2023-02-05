@@ -17,12 +17,9 @@ public class StringCalculator {
 	}
 
 	private int sum(List<Integer> numbers) {
-		int sum = 0;
-		for (Integer number : numbers) {
-			sum = Calculator.add(sum, number);
-		}
-
-		return sum;
+		return numbers.stream()
+			.mapToInt(Integer::intValue)
+			.reduce(0, Calculator::add);
 	}
 
 	private void validatePositiveOrZero(List<Integer> numbers) {

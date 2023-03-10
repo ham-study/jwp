@@ -1,18 +1,19 @@
 package webserver;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import webserver.handler.ResourceHandler;
-import webserver.handler.UserHandler;
+import webserver.controller.Controller;
+import webserver.controller.CreateUserController;
+import webserver.controller.ListUserController;
+import webserver.controller.LoginController;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 
@@ -20,13 +21,14 @@ public class RequestHandler extends Thread {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
-    private final ResourceHandler resourceHandler;
-    private final UserHandler userHandler;
+    private final Map<String, Controller> handlerMapping = new HashMap<>();
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
-        this.resourceHandler = new ResourceHandler();
-        this.userHandler = new UserHandler();
+
+        handlerMapping.put("/user/create", new CreateUserController());
+        handlerMapping.put("/user/list", new ListUserController());
+        handlerMapping.put("/user/login", new LoginController());
     }
 
     public void run() {
@@ -34,38 +36,32 @@ public class RequestHandler extends Thread {
             connection.getPort());
 
         try (InputStream in = connection.getInputStream();
-             OutputStream out = connection.getOutputStream();
-             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
-             DataOutputStream dataOutputStream = new DataOutputStream(out)
+             OutputStream out = connection.getOutputStream()
         ) {
-            HttpRequest httpRequest = HttpRequest.from(bufferedReader);
+            HttpRequest httpRequest = HttpRequest.parse(in);
+            HttpResponse httpResponse = new HttpResponse(out);
 
             log.info("HttpRequest: {}", httpRequest);
 
-            if (resourceHandler.isPossible(httpRequest)) {
-                HttpResponse httpResponse = resourceHandler.handle(httpRequest);
-                response(dataOutputStream, httpResponse);
+            String requestUri = httpRequest.getRequestUri();
+            Controller controller = handlerMapping.get(requestUri);
+
+            if (controller == null) {
+                httpResponse.forward(getDefaultUri(requestUri));
                 return;
             }
 
-            if (userHandler.isPossible(httpRequest)) {
-                HttpResponse httpResponse = userHandler.handle(httpRequest);
-                response(dataOutputStream, httpResponse);
-            }
+            controller.service(httpRequest, httpResponse);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private void response(DataOutputStream dos, HttpResponse httpResponse) {
-        log.info("Http Response: {}", httpResponse);
-        try {
-            dos.writeBytes(httpResponse.getHttpResponseHeader());
-            dos.writeBytes("\r\n");
-            dos.write(httpResponse.getHttpBody(), 0, httpResponse.getHttpBody().length);
-            dos.flush();
-        } catch (IOException e) {
-            log.error(e.getMessage());
+    private String getDefaultUri(String uri) {
+        if (uri.equals("/")) {
+            return "/index.html";
         }
+        return uri;
     }
+
 }

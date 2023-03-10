@@ -2,9 +2,13 @@ package webserver.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import util.HttpRequestUtils;
 import util.IOUtils;
 
 public class HttpRequest {
@@ -16,7 +20,10 @@ public class HttpRequest {
 		this.httpBody = httpBody;
 	}
 
-	public static HttpRequest from(BufferedReader bufferedReader) throws IOException {
+	public static HttpRequest parse(InputStream inputStream) throws IOException {
+		Objects.requireNonNull(inputStream);
+
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 		String line = bufferedReader.readLine();
 		if (line == null) {
 			throw new IllegalArgumentException("Wrong Http Request");
@@ -35,7 +42,13 @@ public class HttpRequest {
 			httpRequestHeader.getContentLength()
 		);
 
+		if (httpRequestHeader.isFormData()) {
+			httpRequestHeader.addRequestParameters(HttpRequestUtils.parseQueryString(body));
+			return new HttpRequest(httpRequestHeader, null);
+		}
+
 		return new HttpRequest(httpRequestHeader, body);
+
 	}
 
 	public String getRequestUri() {
@@ -44,16 +57,24 @@ public class HttpRequest {
 			.getUri();
 	}
 
-	public String getHttpBody() {
-		return httpBody;
-	}
-
 	public HttpMethod getHttpMethod() {
 		return httpRequestHeader.getHttpMethod();
 	}
 
-	public String getCookie(String cookieName) {
-		return httpRequestHeader.getCookie(cookieName);
+	public Cookie getCookie(String cookieName) {
+		return httpRequestHeader.getCookies()
+			.stream()
+			.filter(cookie -> cookie.getName().equals(cookieName))
+			.findAny()
+			.orElse(null);
+	}
+
+	public String getHeader(String key) {
+		return httpRequestHeader.getHeader(key);
+	}
+
+	public String getRequestParameter(String key) {
+		return httpRequestHeader.getRequestParameter(key);
 	}
 
 	@Override

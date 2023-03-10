@@ -1,20 +1,20 @@
 package webserver.http;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
 import util.HttpRequestUtils;
 
 public class HttpRequestHeader {
-	private static final String COOKIE_SEPARATOR = ",";
-	private static final String EMPTH_STRING = "";
-
 	private final HttpMethod httpMethod;
 	private final HttpRequestUri httpRequestUri;
 	private final String protocol;
 	private final Map<String, String> fields = new HashMap<>();
+	private final List<Cookie> cookies = new ArrayList<>();
 
 	private HttpRequestHeader(HttpMethod httpMethod, HttpRequestUri httpRequestUri, String protocol) {
 		this.httpMethod = httpMethod;
@@ -38,12 +38,28 @@ public class HttpRequestHeader {
 		for (int i = 1; i < headers.size(); i++) {
 			HttpRequestUtils.Pair pair = HttpRequestUtils.parseHeader(headers.get(i));
 
-			if (pair != null) {
-				header.putField(pair.getKey(), pair.getValue());
+			if (pair == null) {
+				continue;
 			}
+
+			String headerName = pair.getKey();
+			String cookie = pair.getValue();
+			if (headerName.equals(HttpHeaders.COOKIE)) {
+				header.addCookie(cookie);
+			}
+			header.putField(headerName, cookie);
 		}
 
 		return header;
+	}
+
+	private void addCookie(String lawCookie) {
+		Map<String, String> cookieMap = HttpRequestUtils.parseCookies(lawCookie);
+
+		cookieMap.forEach((key, value) -> {
+			Cookie cookie = new Cookie(key, value);
+			cookies.add(cookie);
+		});
 	}
 
 	private void putField(String key, String value) {
@@ -63,19 +79,21 @@ public class HttpRequestHeader {
 		return Integer.parseInt(value);
 	}
 
-	public String getCookie(String cookieName) {
-		Map<String, String> cookie = HttpRequestUtils.parseCookies(fields.getOrDefault("Cookie", EMPTH_STRING));
-
-		if (notExistCookie(cookie, cookieName)) {
-			return "";
-		}
-
-		return cookie.get(cookieName)
-			.split(COOKIE_SEPARATOR)[0];
+	public List<Cookie> getCookies() {
+		return new ArrayList<>(this.cookies);
 	}
 
-	private boolean notExistCookie(Map<String, String> cookie, String cookieName) {
-		return !cookie.containsKey(cookieName);
+	public String getHeader(String key) {
+		return fields.get(key);
+	}
+
+	public void addRequestParameters(Map<String, String> requestParameters) {
+		httpRequestUri.putQueryParams(requestParameters);
+	}
+
+	public boolean isFormData() {
+		return fields.getOrDefault(HttpHeaders.CONTENT_TYPE, "")
+			.equals(MediaType.FORM_DATA.toString());
 	}
 
 	@Override
@@ -86,5 +104,9 @@ public class HttpRequestHeader {
 			", protocol='" + protocol + '\'' +
 			", fields=" + fields +
 			'}';
+	}
+
+	public String getRequestParameter(String key) {
+		return httpRequestUri.getQueryValue(key);
 	}
 }

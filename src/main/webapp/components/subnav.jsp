@@ -22,7 +22,7 @@
 				<c:choose>
 					<c:when test="${not empty user}">
 						<li><a href="/user/logout" role="button">로그아웃</a></li>
-						<li><a href="#" role="button">개인정보수정</a></li>
+						<li><a href="/user/form/update?userId=${user.userId}" role="button">개인정보수정</a></li>
 					</c:when>
 					<c:otherwise>
 						<li><a href="/user/form/create" role="button">회원가입</a></li>

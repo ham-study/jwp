@@ -1,5 +1,7 @@
 package next.model;
 
+import org.springframework.util.Assert;
+
 public class User {
 	private String userId;
 	private String password;
@@ -27,6 +29,15 @@ public class User {
 
 	public String getEmail() {
 		return email;
+	}
+
+	public void update(String password, String name, String email) {
+		Assert.notNull(password, "password should not be null");
+		Assert.notNull(name, "name should not be null");
+		Assert.notNull(email, "email should not be null");
+		this.password = password;
+		this.name = name;
+		this.email = email;
 	}
 
 	@Override

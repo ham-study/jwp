@@ -77,4 +77,8 @@ public class User {
 		return true;
 	}
 
+	public boolean login(String password) {
+		Assert.notNull(password, "password should not be null");
+		return this.password.equals(password);
+	}
 }

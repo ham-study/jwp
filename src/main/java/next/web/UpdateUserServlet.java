@@ -21,7 +21,12 @@ public class UpdateUserServlet extends HttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String userId = req.getParameter("userId");
 
-		User user = DataBase.findUserById(userId);
+		User user = (User)req.getSession().getAttribute("user");
+
+		if (user == null || !user.getUserId().equals(userId)) {
+			throw new IllegalStateException(String.format("Cannot update user. userId: %s", userId));
+		}
+
 		user.update(
 			req.getParameter("password"),
 			req.getParameter("name"),

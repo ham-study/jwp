@@ -23,7 +23,7 @@ dependencies {
 
     implementation("com.google.guava:guava:31.1-jre")
 
-    implementation("com.h2database:h2:1.3.167")
+    implementation("com.h2database:h2:2.1.214")
 
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.apache.commons:commons-dbcp2:2.9.0")
@@ -64,5 +64,5 @@ tasks.war {
 }
 
 tasks.processResources {
-    duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }

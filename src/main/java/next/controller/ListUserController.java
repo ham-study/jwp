@@ -1,29 +1,27 @@
 package next.controller;
 
 import core.db.DataBase;
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
+public class ListUserController implements Controller {
+    private static final ListUserController INSTANCE = new ListUserController();
 
-@WebServlet("/users")
-public class ListUserController extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+    private ListUserController() {
+    }
+
+    public static ListUserController getInstance() {
+        return INSTANCE;
+    }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (!UserSessionUtils.isLogined(req.getSession())) {
-            resp.sendRedirect("/users/loginForm");
-            return;
+    public String service(HttpServletRequest request, HttpServletResponse response) {
+        if (!UserSessionUtils.isLogined(request.getSession())) {
+            return "redirect:/users/loginForm";
         }
 
-        req.setAttribute("users", DataBase.findAll());
+        request.setAttribute("users", DataBase.findAll());
 
-        RequestDispatcher rd = req.getRequestDispatcher("/user/list.jsp");
-        rd.forward(req, resp);
+        return "/user/list.jsp";
     }
 }

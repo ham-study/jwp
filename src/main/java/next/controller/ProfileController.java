@@ -1,12 +1,10 @@
 package next.controller;
 
 import core.db.DataBase;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import next.model.User;
 
-@WebServlet("/users/profile")
 public class ProfileController implements Controller {
     private static final ProfileController INSTANCE = new ProfileController();
 

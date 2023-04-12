@@ -1,24 +1,23 @@
 package next.controller;
 
-import java.io.IOException;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import core.db.DataBase;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet("")
-public class HomeController extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+public class HomeController implements Controller {
+	private static final HomeController INSTANCE = new HomeController();
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("users", DataBase.findAll());
-        RequestDispatcher rd = req.getRequestDispatcher("index.jsp");
-        rd.forward(req, resp);
-    }
+	private HomeController() {
+
+	}
+
+	public static HomeController getInstance() {
+		return INSTANCE;
+	}
+
+	@Override
+	public String service(HttpServletRequest request, HttpServletResponse response) {
+		request.setAttribute("users", DataBase.findAll());
+		return "index.jsp";
+	}
 }

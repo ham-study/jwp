@@ -1,9 +1,8 @@
 package next.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import core.mvc.Controller;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import next.dao.UserDao;
 
 public class ListUserController implements Controller {

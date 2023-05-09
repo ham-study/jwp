@@ -12,6 +12,7 @@ repositories {
     maven {
         url = uri("https://repo.maven.apache.org/maven2/")
     }
+    mavenCentral()
 }
 
 dependencies {
@@ -32,7 +33,8 @@ dependencies {
 
     implementation("ch.qos.logback:logback-classic:1.4.5")
 
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
 
     // embeded tomcat
     implementation("org.apache.tomcat.embed:tomcat-embed-core:10.1.5")

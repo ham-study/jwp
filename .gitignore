@@ -5,3 +5,7 @@
 /jwp-basic.iml
 /.idea/
 /tomcat.8080/
+/.gradle
+/.idea
+/build
+/out

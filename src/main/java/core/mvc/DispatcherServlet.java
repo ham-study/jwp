@@ -22,6 +22,8 @@ public class DispatcherServlet extends HttpServlet {
     public void init() throws ServletException {
         rm = new RequestMapping();
         rm.initMapping();
+
+        logger.info("DispatcherServlet initialized!");
     }
 
     @Override

@@ -3,14 +3,16 @@ package next.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import core.mvc.Controller;
+import core.mvc.AbstractController;
 import next.dao.QuestionDao;
+import next.view.ModelAndView;
 
-public class HomeController implements Controller {
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        QuestionDao questionDao = new QuestionDao();
-        req.setAttribute("questions", questionDao.findAll());
-        return "home.jsp";
-    }
+public class HomeController extends AbstractController {
+	@Override
+	public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+		QuestionDao questionDao = new QuestionDao();
+
+		return jspView("home.jsp")
+			.setModelAttribute("questions", questionDao.findAll());
+	}
 }

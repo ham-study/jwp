@@ -3,18 +3,20 @@ package core.mvc;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ForwardController implements Controller {
-    private String forwardUrl;
+import next.view.ModelAndView;
 
-    public ForwardController(String forwardUrl) {
-        this.forwardUrl = forwardUrl;
-        if (forwardUrl == null) {
-            throw new NullPointerException("forwardUrl is null. 이동할 URL을 입력하세요.");
-        }
-    }
+public class ForwardController extends AbstractController {
+	private String forwardUrl;
 
-    @Override
-    public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        return forwardUrl;
-    }
+	public ForwardController(String forwardUrl) {
+		this.forwardUrl = forwardUrl;
+		if (forwardUrl == null) {
+			throw new NullPointerException("forwardUrl is null. 이동할 URL을 입력하세요.");
+		}
+	}
+
+	@Override
+	public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+		return jspView(forwardUrl);
+	}
 }

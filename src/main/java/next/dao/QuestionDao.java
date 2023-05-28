@@ -81,4 +81,16 @@ public class QuestionDao {
 
         jdbcTemplate.update(sql, question.getTitle(), question.getContents(), question.getCountOfComment(), question.getQuestionId());
     }
+
+    public void deleteById(long questionId) {
+        JdbcTemplate jdbcTemplate = JdbcTemplate.INSTANCE;
+
+        String sql = """
+            DELETE
+            FROM QUESTIONS
+            WHERE questionId = ?
+            """;
+
+        jdbcTemplate.update(sql, questionId);
+    }
 }

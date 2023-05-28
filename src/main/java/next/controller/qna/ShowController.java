@@ -14,15 +14,13 @@ import next.model.Question;
 public class ShowController extends AbstractController {
     private QuestionDao questionDao = new QuestionDao();
     private AnswerDao answerDao = new AnswerDao();
-    private Question question;
-    private List<Answer> answers;
 
     @Override
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse response) throws Exception {
         Long questionId = Long.parseLong(req.getParameter("questionId"));
 
-        question = questionDao.findById(questionId);
-        answers = answerDao.findAllByQuestionId(questionId);
+        Question question = questionDao.findById(questionId);
+        List<Answer> answers = answerDao.findAllByQuestionId(questionId);
 
         ModelAndView mav = jspView("/qna/show.jsp");
         mav.addObject("question", question);

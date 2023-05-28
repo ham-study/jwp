@@ -13,4 +13,5 @@
 
 
 #### 7. next.web.qna package의 ShowController는 멀티 쓰레드 상황에서 문제가 발생하는 이유에 대해 설명하라.
-* 
+* `ShowController`는 싱글톤인데 question과 answers가 인스턴스 변수이고 불변이 아니므로 멀티스레드 환경에서 문제가 발생할 수 있다.
+* question과 answers를 지역변수로 변경하면된다

@@ -1,6 +1,7 @@
 package next.model;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class Question {
     private long questionId;
@@ -87,5 +88,13 @@ public class Question {
         if (questionId != other.questionId)
             return false;
         return true;
+    }
+
+    public void update(String title, String contents) {
+        Objects.requireNonNull(title, "title");
+        Objects.requireNonNull(contents, "contents");
+
+        this.title = title;
+        this.contents = contents;
     }
 }

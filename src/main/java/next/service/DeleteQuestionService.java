@@ -15,15 +15,15 @@ public class DeleteQuestionService {
 		Question question = questionDao.findById(questionId);
 		List<Answer> answers = answerDao.findAllByQuestionId(questionId);
 
-		if (!answers.isEmpty() && !isAllAnswerWrittenBy(answers, question.getWriter())) {
+		if (!answers.isEmpty() && isAnyAnswerNotWrittenBy(answers, question.getWriter())) {
 			throw new IllegalStateException("Can not delete question");
 		}
 
 		questionDao.deleteById(questionId);
 	}
 
-	private boolean isAllAnswerWrittenBy(List<Answer> answers, String writer) {
+	private boolean isAnyAnswerNotWrittenBy(List<Answer> answers, String writer) {
 		return answers.stream()
-			.allMatch(answer -> answer.getWriter().equals(writer));
+			.anyMatch(answer -> !answer.getWriter().equals(writer));
 	}
 }

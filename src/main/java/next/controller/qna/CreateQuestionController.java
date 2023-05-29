@@ -34,7 +34,6 @@ public class CreateQuestionController extends AbstractController {
 		logger.info("Question is created! {}", question);
 
 
-		return jspView("redirect:/")
-			.addObject("questions", questionDao.findAll());
+		return jspView("redirect:/");
 	}
 }

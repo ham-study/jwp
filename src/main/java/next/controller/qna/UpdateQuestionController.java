@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import next.controller.UserSessionUtils;
 import next.dao.QuestionDao;
 import next.model.Question;
+import next.model.User;
 
 public class UpdateQuestionController extends AbstractController {
 	private QuestionDao questionDao = new QuestionDao();
@@ -23,6 +24,11 @@ public class UpdateQuestionController extends AbstractController {
 		String contents = request.getParameter("contents");
 
 		Question question = questionDao.findById(questionId);
+
+		if (question.isNotWrittenBy(UserSessionUtils.getUserFromSession(request.getSession()))) {
+			throw new IllegalStateException("cannot update question!");
+		}
+
 		question.update(title, contents);
 		questionDao.update(question);
 		return jspView(String.format("redirect:/qna/show?questionId=%d", questionId));

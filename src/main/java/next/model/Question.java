@@ -62,6 +62,18 @@ public class Question {
         this.countOfComment++;
     }
 
+    public boolean isWrittenBy(User user) {
+        if (user == null) {
+            return false;
+        }
+
+        return writer.equals(user.getName());
+    }
+
+    public boolean isNotWrittenBy(User user) {
+        return !isWrittenBy(user);
+    }
+
     @Override
     public String toString() {
         return "Question [questionId=" + questionId + ", writer=" + writer + ", title=" + title + ", contents="

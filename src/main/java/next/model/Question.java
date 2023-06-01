@@ -1,6 +1,7 @@
 package next.model;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class Question {
     private long questionId;
@@ -57,6 +58,22 @@ public class Question {
         return countOfComment;
     }
 
+    public void addCommentCount() {
+        this.countOfComment++;
+    }
+
+    public boolean isWrittenBy(User user) {
+        if (user == null) {
+            return false;
+        }
+
+        return writer.equals(user.getName());
+    }
+
+    public boolean isNotWrittenBy(User user) {
+        return !isWrittenBy(user);
+    }
+
     @Override
     public String toString() {
         return "Question [questionId=" + questionId + ", writer=" + writer + ", title=" + title + ", contents="
@@ -83,5 +100,13 @@ public class Question {
         if (questionId != other.questionId)
             return false;
         return true;
+    }
+
+    public void update(String title, String contents) {
+        Objects.requireNonNull(title, "title");
+        Objects.requireNonNull(contents, "contents");
+
+        this.title = title;
+        this.contents = contents;
     }
 }

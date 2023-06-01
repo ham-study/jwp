@@ -14,7 +14,7 @@ INSERT INTO USERS VALUES('admin', 'password', '자바지기', 'admin@slipp.net')
 DROP TABLE IF EXISTS QUESTIONS;
 
 CREATE TABLE QUESTIONS (
-	questionId 			bigint				auto_increment,
+	questionId 			bigint				auto_increment(10, 1),
 	writer				varchar(30)			NOT NULL,
 	title				varchar(50)			NOT NULL,
 	contents			varchar(5000)		NOT NULL,

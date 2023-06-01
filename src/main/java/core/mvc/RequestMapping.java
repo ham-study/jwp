@@ -6,12 +6,19 @@ import java.util.Map;
 import next.controller.HomeController;
 import next.controller.qna.AddAnswerController;
 import next.controller.qna.DeleteAnswerController;
+import next.controller.qna.QnaDeleteApiController;
+import next.controller.qna.QnaDeleteController;
+import next.controller.qna.QnaFormController;
+import next.controller.qna.QnaListController;
+import next.controller.qna.QnaUpdateFormController;
 import next.controller.qna.ShowController;
+import next.controller.qna.UpdateQuestionController;
 import next.controller.user.CreateUserController;
 import next.controller.user.ListUserController;
 import next.controller.user.LoginController;
 import next.controller.user.LogoutController;
 import next.controller.user.ProfileController;
+import next.controller.qna.QnaCreateController;
 import next.controller.user.UpdateFormUserController;
 import next.controller.user.UpdateUserController;
 
@@ -33,10 +40,16 @@ public class RequestMapping {
         mappings.put("/users/create", new CreateUserController());
         mappings.put("/users/updateForm", new UpdateFormUserController());
         mappings.put("/users/update", new UpdateUserController());
-        mappings.put("/qna/form", new ForwardController("/qna/form.jsp"));
+        mappings.put("/qna/form", new QnaFormController());
+        mappings.put("/qna/updateForm", new QnaUpdateFormController());
+        mappings.put("/qna/create", new QnaCreateController());
         mappings.put("/qna/show", new ShowController());
+        mappings.put("/qna/update", new UpdateQuestionController());
+        mappings.put("/qna/delete", new QnaDeleteController());
+        mappings.put("/api/qna/delete", new QnaDeleteApiController());
         mappings.put("/api/qna/addAnswer", new AddAnswerController());
         mappings.put("/api/qna/deleteAnswer", new DeleteAnswerController());
+        mappings.put("/api/qna/list", new QnaListController());
 
         logger.info("Initialized Request Mapping!");
     }

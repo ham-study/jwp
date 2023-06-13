@@ -1,11 +1,10 @@
 package next.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import next.dao.QuestionDao;
 import core.mvc.AbstractController;
 import core.mvc.ModelAndView;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import next.dao.QuestionDao;
 
 public class HomeController extends AbstractController {
     private QuestionDao questionDao = QuestionDao.getInstance();

@@ -112,7 +112,7 @@
 		<finalName>jwp-basic</finalName>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<testSourceDirectory>src/test/java</testSourceDirectory>
-		<outputDirectory>webapp/WEB-INF/classes</outputDirectory>
+		<outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
 		<testOutputDirectory>target/test-classes</testOutputDirectory>
 
 		<resources>
@@ -126,7 +126,7 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-					<warSourceDirectory>webapp</warSourceDirectory>
+					<warSourceDirectory>src/main/webapp</warSourceDirectory>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>

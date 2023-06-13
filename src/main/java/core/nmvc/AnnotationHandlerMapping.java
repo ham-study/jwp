@@ -2,11 +2,9 @@ package core.nmvc;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.common.collect.Maps;
-
 import core.annotation.RequestMethod;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class AnnotationHandlerMapping {
     private Object[] basePackage;

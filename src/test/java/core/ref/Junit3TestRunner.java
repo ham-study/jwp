@@ -1,6 +1,6 @@
 package core.ref;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class Junit3TestRunner {
     @Test

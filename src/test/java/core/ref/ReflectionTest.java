@@ -1,5 +1,6 @@
 package core.ref;
 
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
@@ -23,9 +24,16 @@ class ReflectionTest {
     }
     
     @Test
-    public void newInstanceWithConstructorArgs() {
+    void newInstanceWithConstructorArgs() {
         Class<User> clazz = User.class;
         logger.debug(clazz.getName());
+        try {
+            Constructor<User> declaredConstructor = clazz.getDeclaredConstructor(String.class, String.class, String.class, String.class);
+            User user = declaredConstructor.newInstance("id", "password", "name", "email");
+            logger.debug("User = {}", user);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     
     @Test

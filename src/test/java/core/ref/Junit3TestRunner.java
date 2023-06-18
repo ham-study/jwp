@@ -1,11 +1,21 @@
 package core.ref;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
-public class Junit3TestRunner {
+class Junit3TestRunner {
     @Test
-    public void run() throws Exception {
+    void run() throws Exception {
         Class<Junit3Test> clazz = Junit3Test.class;
-
+        Arrays.stream(clazz.getMethods())
+            .filter(method -> method.getName().startsWith("test"))
+            .forEach(method -> {
+                try {
+                    method.invoke(clazz.getDeclaredConstructor().newInstance());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
     }
 }

@@ -1,6 +1,7 @@
 package core.ref;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
@@ -24,21 +25,29 @@ class ReflectionTest {
     }
     
     @Test
-    void newInstanceWithConstructorArgs() {
+    void newInstanceWithConstructorArgs() throws Exception {
         Class<User> clazz = User.class;
         logger.debug(clazz.getName());
-        try {
-            Constructor<User> declaredConstructor = clazz.getDeclaredConstructor(String.class, String.class, String.class, String.class);
-            User user = declaredConstructor.newInstance("id", "password", "name", "email");
-            logger.debug("User = {}", user);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
+        Constructor<User> declaredConstructor = clazz.getDeclaredConstructor(String.class, String.class, String.class, String.class);
+        User user = declaredConstructor.newInstance("id", "password", "name", "email");
+        logger.debug("User = {}", user);
     }
     
     @Test
-    public void privateFieldAccess() {
+    void privateFieldAccess() throws Exception {
         Class<Student> clazz = Student.class;
         logger.debug(clazz.getName());
+        Student student = clazz.getDeclaredConstructor().newInstance();
+
+        Field nameField = clazz.getDeclaredField("name");
+        nameField.setAccessible(true);
+        nameField.set(student, "name");
+
+        Field ageField = clazz.getDeclaredField("age");
+        ageField.setAccessible(true);
+        ageField.set(student, 10);
+
+        logger.debug("Student = {}", student);
     }
 }

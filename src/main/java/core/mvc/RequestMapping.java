@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.http.HttpServletRequest;
 import next.controller.HomeController;
 import next.controller.qna.AddAnswerController;
 import next.controller.qna.ApiDeleteQuestionController;
@@ -18,7 +19,7 @@ import next.controller.qna.ShowQuestionController;
 import next.controller.qna.UpdateFormQuestionController;
 import next.controller.qna.UpdateQuestionController;
 
-public class RequestMapping {
+public class RequestMapping implements HandlerMapping{
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private Map<String, Controller> mappings = new HashMap<>();
 
@@ -46,5 +47,10 @@ public class RequestMapping {
 
     void put(String url, Controller controller) {
         mappings.put(url, controller);
+    }
+
+    @Override
+    public Object getHandler(HttpServletRequest request) {
+        return mappings.get(request.getRequestURI());
     }
 }

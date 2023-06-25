@@ -1,7 +1,9 @@
 package core.di.factory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +28,17 @@ public class BeanFactory {
     @SuppressWarnings("unchecked")
     public <T> T getBean(Class<T> requiredType) {
         return (T) beans.get(requiredType);
+    }
+
+    public Map<Class<?>, Object> getBeansAnnotatedWith(Class<? extends Annotation> annotation) {
+        Map<Class<?>, Object> beans = new HashMap<>();
+        for (Class<?> preInstantiateBean : preInstantiateBeans) {
+            if (preInstantiateBean.getAnnotation(annotation) != null) {
+                beans.put(preInstantiateBean, getBean(preInstantiateBean));
+            }
+        }
+
+        return beans;
     }
 
     public void initialize() {

@@ -1,13 +1,14 @@
 package core.di.factory;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.BeanCreationException;
 
 import com.google.common.collect.Maps;
 
@@ -29,39 +30,48 @@ public class BeanFactory {
 
     public void initialize() {
         for (Class<?> preInstantiateBean : preInstantiateBeans) {
-            register(BeanFactoryUtils.findConcreteClass(preInstantiateBean, preInstantiateBeans));
+            if (beans.get(preInstantiateBean) == null) {
+                instantiateClass(preInstantiateBean);
+            }
         }
     }
 
-    private void register(Class<?> preInstantiateBean) {
+    private Object instantiateClass(Class<?> preInstantiateBean) {
         if (beans.containsKey(preInstantiateBean)) {
-            return;
+            return beans.get(preInstantiateBean);
         }
 
         Constructor<?> injectedConstructor = BeanFactoryUtils.getInjectedConstructor(preInstantiateBean);
         if (injectedConstructor == null) {
-            Object instance = BeanUtils.instantiate(preInstantiateBean);
-            beans.put(preInstantiateBean, instance);
-            return;
-        }
-
-        Class<?>[] parameterTypes = injectedConstructor.getParameterTypes();
-        Object[] parameters = new Object[parameterTypes.length];
-
-        for (int i = 0; i < parameterTypes.length; i++) {
-            Class<?> parameterType = parameterTypes[i];
-            Class<?> concreteClass = BeanFactoryUtils.findConcreteClass(parameterType, preInstantiateBeans);
-            if (getBean(concreteClass) == null) {
-                register(concreteClass);
-            }
-            parameters[i] = getBean(concreteClass);
-        }
-
-        try {
-            Object bean = injectedConstructor.newInstance(parameters);
+            Object bean = BeanUtils.instantiate(preInstantiateBean);
             beans.put(preInstantiateBean, bean);
-        } catch (Exception e) {
-            throw new BeanCreationException("Failed to instantiate bean." + e.getMessage());
+            return bean;
         }
+
+        Object bean = instantiateConstructor(injectedConstructor);
+        beans.put(preInstantiateBean, bean);
+        return bean;
+    }
+
+    private Object instantiateConstructor(Constructor<?> constructor) {
+        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        List<Object> parameters = new ArrayList<>();
+
+        for (Class<?> parameterType : parameterTypes) {
+            Class<?> concreteClass = BeanFactoryUtils.findConcreteClass(parameterType, preInstantiateBeans);
+
+            if (!preInstantiateBeans.contains(concreteClass)) {
+                throw new IllegalArgumentException(concreteClass + " is not a bean");
+            }
+
+            Object bean = getBean(concreteClass);
+            if (bean == null) {
+                bean = instantiateClass(concreteClass);
+            }
+
+            parameters.add(bean);
+        }
+
+        return BeanUtils.instantiateClass(constructor, parameters.toArray());
     }
 }

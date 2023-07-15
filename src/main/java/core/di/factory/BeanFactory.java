@@ -1,18 +1,17 @@
 package core.di.factory;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import core.annotation.Controller;
 
 public class BeanFactory {
@@ -22,8 +21,17 @@ public class BeanFactory {
 
     private Map<Class<?>, Object> beans = Maps.newHashMap();
 
+    private List<Injector> injectors = new ArrayList<>();
+
     public BeanFactory(Set<Class<?>> preInstanticateBeans) {
         this.preInstanticateBeans = preInstanticateBeans;
+        injectors.addAll(
+            Arrays.asList(
+                new ConstructorInjector(this),
+                new MethodInjector(this),
+                new FieldInjector(this)
+            )
+        );
     }
 
     @SuppressWarnings("unchecked")
@@ -35,46 +43,15 @@ public class BeanFactory {
         for (Class<?> clazz : preInstanticateBeans) {
             if (beans.get(clazz) == null) {
                 logger.debug("instantiated Class : {}", clazz);
-                instantiateClass(clazz);
+                inject(clazz);
             }
         }
     }
 
-    private Object instantiateClass(Class<?> clazz) {
-        Object bean = beans.get(clazz);
-        if (bean != null) {
-            return bean;
+    private void inject(Class<?> clazz) {
+        for (Injector injector : injectors) {
+            injector.inject(clazz);
         }
-
-        Constructor<?> injectedConstructor = BeanFactoryUtils.getInjectedConstructor(clazz);
-        if (injectedConstructor == null) {
-            bean = BeanUtils.instantiate(clazz);
-            beans.put(clazz, bean);
-            return bean;
-        }
-
-        logger.debug("Constructor : {}", injectedConstructor);
-        bean = instantiateConstructor(injectedConstructor);
-        beans.put(clazz, bean);
-        return bean;
-    }
-
-    private Object instantiateConstructor(Constructor<?> constructor) {
-        Class<?>[] pTypes = constructor.getParameterTypes();
-        List<Object> args = Lists.newArrayList();
-        for (Class<?> clazz : pTypes) {
-            Class<?> concreteClazz = BeanFactoryUtils.findConcreteClass(clazz, preInstanticateBeans);
-            if (!preInstanticateBeans.contains(concreteClazz)) {
-                throw new IllegalStateException(clazz + "는 Bean이 아니다.");
-            }
-
-            Object bean = beans.get(concreteClazz);
-            if (bean == null) {
-                bean = instantiateClass(concreteClazz);
-            }
-            args.add(bean);
-        }
-        return BeanUtils.instantiateClass(constructor, args.toArray());
     }
 
     public Map<Class<?>, Object> getControllers() {
@@ -86,5 +63,13 @@ public class BeanFactory {
             }
         }
         return controllers;
+    }
+
+    public void registerBean(Class<?> clazz, Object bean) {
+        beans.put(clazz, bean);
+    }
+
+    public Set<Class<?>> getPreInstanticateBeans() {
+        return Collections.unmodifiableSet(preInstanticateBeans);
     }
 }

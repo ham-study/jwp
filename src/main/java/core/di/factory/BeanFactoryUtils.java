@@ -1,13 +1,13 @@
 package core.di.factory;
 
-import static org.reflections.ReflectionUtils.getAllConstructors;
-import static org.reflections.ReflectionUtils.withAnnotation;
+import static org.reflections.ReflectionUtils.*;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-
 import core.annotation.Inject;
 
 public class BeanFactoryUtils {
@@ -25,6 +25,18 @@ public class BeanFactoryUtils {
             return null;
         }
         return injectedConstructors.iterator().next();
+    }
+
+    public static Set<Method> getInjectedMethods(Class<?> clazz) {
+        return getAllMethods(clazz, withAnnotation(Inject.class), withReturnType(void.class));
+    }
+
+    public static Set<Field> getInjectedFields(Class<?> clazz) {
+        return getAllFields(clazz, withAnnotation(Inject.class));
+    }
+
+    public static Set<Constructor> getInjectedConstructors(Class<?> clazz) {
+        return getAllConstructors(clazz, withAnnotation(Inject.class));
     }
 
     /**
